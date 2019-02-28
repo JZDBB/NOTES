@@ -50,10 +50,17 @@ def f_2d(x1, x2):  # 目标函数。
 def gd_2d(x1, x2, s1, s2):
     return (x1 - eta * 2 * x1, x2 - eta * 4 * x2, 0, 0)
 
+def sgd_2d(x1, x2, s1, s2):
+    return (x1 - eta * (2 * x1 + np.random.normal(0.1)),
+            x2 - eta * (4 * x2 + np.random.normal(0.1)), 0, 0)
 
 if __name__ == '__main__':
-
+    # 1-D gradient descent
     # res = gd(0.2)
     # trace_show(res)
 
-    show_trace_2d(f_2d, train_2d(gd_2d))
+    # 2-D gradient descent
+    # show_trace_2d(f_2d, train_2d(gd_2d))
+
+    # stochastic gradient descent
+    show_trace_2d(f_2d, train_2d(sgd_2d))
