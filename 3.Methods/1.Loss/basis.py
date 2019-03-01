@@ -27,8 +27,8 @@ def trace_show(res):
     # plt.ylim([10, 10])
     plt.show()
 
-def train_2d(trainer):  # 本函数将保存在 gluonbook 包中方便以后使用。
-    x1, x2, s1, s2 = -5, -2, 0, 0  # s1 和 s2 是自变量状态，之后章节会使用。
+def train_2d(trainer):
+    x1, x2, s1, s2 = -5, -2, 0, 0  # s1 和 s2 是自变量状态
     results = [(x1, x2)]
     for i in range(20):
         x1, x2, s1, s2 = trainer(x1, x2, s1, s2)
