@@ -3,6 +3,7 @@ import tensorflow
 import matplotlib.pyplot as plt
 import numpy as np
 eta = 0.1
+eta2 = 0.4
 
 def gd(eta):
     x = 10
@@ -54,6 +55,15 @@ def sgd_2d(x1, x2, s1, s2):
     return (x1 - eta * (2 * x1 + np.random.normal(0.1)),
             x2 - eta * (4 * x2 + np.random.normal(0.1)), 0, 0)
 
+def f_2d2(x1, x2):
+    return 0.1 * x1 ** 2 + 2 * x2 ** 2
+
+def gd_2d2(x1, x2, s1, s2):
+    return (x1 - eta2 * 0.2 * x1, x2 - eta2 * 4 * x2, 0, 0)
+
+def network(learning_rate, batch_size):
+    pass
+
 if __name__ == '__main__':
     # 1-D gradient descent
     # res = gd(0.2)
@@ -63,4 +73,7 @@ if __name__ == '__main__':
     # show_trace_2d(f_2d, train_2d(gd_2d))
 
     # stochastic gradient descent
-    show_trace_2d(f_2d, train_2d(sgd_2d))
+    # show_trace_2d(f_2d, train_2d(sgd_2d))
+
+    # momentum
+    show_trace_2d(f_2d2, train_2d(gd_2d2))
