@@ -6,6 +6,9 @@ import math
 
 eta = 0.1
 eta2 = 0.4
+delta_x1 = 0
+delta_x2 = 0
+
 
 def gd(eta):
     x = 10
@@ -33,8 +36,10 @@ def trace_show(res):
 def train_2d(trainer):
     x1, x2, s1, s2 = -5, -2, 0, 0  # s1 和 s2 是自变量状态
     results = [(x1, x2)]
+    # delta_x1, delta_x2 = 0, 0
     for i in range(20):
         x1, x2, s1, s2 = trainer(x1, x2, s1, s2)
+        # delta_x1, delta_x2 = delta_x1 - x1, delta_x2 - x2
         results.append((x1, x2))
         print('epoch %d, x1 %f, x2 %f' % (i + 1, x1, x2))
     return results
@@ -87,10 +92,20 @@ def rmsprop_2d(x1, x2, s1, s2):
     x2 -= eta5 / math.sqrt(s2 + eps) * g2
     return x1, x2, s1, s2
 
+rho = 0.9
+def adadelta_2d(x1, x2, s1, s2):
+    global delta_x1, delta_x2
+    g1, g2, eps = 0.2 * x1, 4 * x2, 1e-6
+    s1 = rho * s1 + (1 - rho) * g1 ** 2
+    s2 = rho * s2 + (1 - rho) * g2 ** 2
+    g1_ = math.sqrt((delta_x1 + eps) / (s1 + eps)) * g1
+    g2_ = math.sqrt((delta_x2 + eps) / (s2 + eps)) * g2
+    x1 -= g1_
+    x2 -= g2_
+    delta_x1 = rho * delta_x1 + (1+ rho) * g1_ * g1_
+    delta_x2 = rho * delta_x2 + (1 + rho) * g2_ * g2_
+    return x1, x2, s1, s2
 
-
-def network(learning_rate, batch_size):
-    pass
 
 if __name__ == '__main__':
     # 1-D gradient descent
@@ -111,4 +126,7 @@ if __name__ == '__main__':
     # show_trace_2d(f_2d2, train_2d(adagrad_2d))
 
     # rmsprop
-    show_trace_2d(f_2d2, train_2d(rmsprop_2d))
+    # show_trace_2d(f_2d2, train_2d(rmsprop_2d))
+
+    # adadelta
+    show_trace_2d(f_2d2, train_2d(adadelta_2d))
