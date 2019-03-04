@@ -10,7 +10,9 @@
 
    $L_2-Regularization$对参数惩罚比较大。
 
-  对于同样能够满足训练数据的函数，我们更加倾向平方$L_2$范数更小的那一组权值。其中，$\lambda$表示我们倾向于更小权重值的意愿有多强烈。为什么选择平方$L_2$范数更小的权值呢？因为平方$L_2$范数更小，表明$W​$中的每一个元素都比较小，甚至接近于0。这意味着得到的函数曲线更加平滑，起伏更小。而平滑的曲线正好是我们在遇到曲线过拟合时希望得到的结果。这种给损失函数增加一个表示倾向性的部分的做法，叫做正规化（Regularization），是解决过拟合问题的重要工具。
+  对于同样能够满足训练数据的函数，我们更加倾向平方$L_2$范数更小的那一组权值。其中，$\lambda$表示我们倾向于更小权重值的意愿有多强烈。为什么选择平方$L_2$范数更小的权值呢？因为平方$L_2$范数更小，表明$W$中的每一个元素都比较小，甚至接近于0。这意味着得到的函数曲线更加平滑，起伏更小。而平滑的曲线正好是我们在遇到曲线过拟合时希望得到的结果。这种给损失函数增加一个表示倾向性的部分的做法，叫做正规化（Regularization），是解决过拟合问题的重要工具。
+
+  
 
 - ####  深度学习中的容量(capacity) 
 
@@ -18,17 +20,17 @@
 
   
 
-- ####  Exploding gradient 
-
-
-
 - #### 多通道卷积方式
 
 <img src="./img/multi-channel-conv.jpg" height=400px>
 
+
+
 - #### “参数”和“超参数”
 
   “参数”既是我们的模型需要学习的内容，它是模型“内部”的变量，比如模型的权重矩阵和偏置。而超参数是指在一个模型中，我们可以人为设定和修改的参数，例如神经网络的层数、学习率以及隐藏层神经元的个数等。
+
+  
 
 - #### Batch ，epoch 和 iteration的区别
 
@@ -46,7 +48,9 @@
 
   <img src="./img/epoch.jpg" height=300px > 
 
-  样本数量2000，batch = 4 , batch size = 500, iterations = 4 ,
+  样本数量2000，batch = 4 , batch size = 500, iterations = 4 
+
+  
 
 - #### 分割的区分
 
@@ -72,9 +76,23 @@
 
   ​    $ReLU$激活函数的收敛速度相较于$Logistic$函数和$Tanh$函数要快很多，$ReLU$函数在轴左侧的值恒为零，这使得网络具有一定的稀疏性，从而减小参数之间的依存关系，缓解过拟合的问题，并且$ReLU$函数不存在梯度消失的问题。但是$ReLU$的强制稀疏处理虽然可以缓解过拟合问题，但是也可能产生特征屏蔽过多，导致模型无法学习到有效特征的问题。 
 
+  <img src=".\img\gd_exp.png" height="350px">
+
+  <div style="float:left;border:solid 1px 000;margin:2px;"><img src=".\img\relu1.png" height="240" ></div><div style="float:left;border:solid 1px 000;margin:2px;"><img src=".\img\relu2.png" height="240" ></div>
+
+  用 ==Maxout==来根据training data自动生成activation function，也就是learnable activation function。 
+
+  ReLU is a special cases of Maxout！！ 
+
+  <img src=".\img\maxout.png" height="300px">
+
+  
+
 - #### 感受野
 
   $5×5$感受野比$3×3$要好，但是参数多，如果缩小卷积核该为两个$3×3$的叠加，相当于感受野保持不变。
+
+  
 
 - #### CNN网络
 
