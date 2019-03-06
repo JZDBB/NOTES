@@ -5,3 +5,5 @@
 
  
 8.执行梯度检查。如果您在图表中使用自定义操作，则梯度检查尤其重要。斯坦福CS231n中介绍了梯度检查的方法。
+
+numerous candidate object locations (often called “proposals”) 
