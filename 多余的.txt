@@ -7,3 +7,9 @@
 8.执行梯度检查。如果您在图表中使用自定义操作，则梯度检查尤其重要。斯坦福CS231n中介绍了梯度检查的方法。
 
 numerous candidate object locations (often called “proposals”) 
+
+
+autoML 胶囊网络
+
+c语言中的main（）      main (argc,argv)
+    C语言还规定argc(第一个形参)必须是整型变量,argv( 第二个形参)必须是指向字符串的 指针数组。

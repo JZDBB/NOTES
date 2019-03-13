@@ -46,13 +46,15 @@ YOLO是一个全新的方法，把一整张图片一下子应用到一个神经�
 
   x，y表示为在全图中的绝对位置，w和h取其根号形势进行，表示在w和h很大的时候，对其的检测误差波动容忍比较大，如果是小框条件下，w和h的稍许波动都是有更大影响的。也就是说，对不同大小的bbox预测中，相比于大bbox预测偏一点，小box预测偏一点更不能忍受。
 
+  **$1_i^{obj}$表示第i个单元格内预测的第j个bbox是否负责这个object:在计算损失过程中，bbox与ground truth的IoU值最大的负责object。**
+
   <img src="./img/YOLO-bbox.png" width=500px>
 
 - confidence损失 
   $$
   Pr(Object) \times IOU^{truth}_{pred}
   $$
-  可以看出在物体中心不落在网格中时，认为第二项为0，反之，则为1。当物体落在网格中时，得到的confidence是预测的bbox和ground truth的IOU作为结果。该步骤可以理解为让机器自动学习到IOU。 
+  可以看出在物体中心不落在网格中时，认为第二项为0，反之，则为1。当物体落在网格中时，得到的confidence是预测的bbox和ground truth的IOU作为结果。该步骤可以理解为让机器自动学习到IOU。 对于置信度的损失，是按照是否含有object情况下分成两部分，对于不包含object的单元格，我们使用λnoobj调整比例，防止这部分overpowering。
 
 - category损失 
 
@@ -99,3 +101,9 @@ $$
 最终结果是98个预测框，得到每个bbox的class-specific confidence score以后，设置阈值，滤掉得分低的boxes，对保留的boxes进行NMS处理，就得到最终的检测结果。
 
 <img src="./img/YOLO-test.png">
+
+
+
+## YOLO-V2
+
+ [论文:YOLO9000:Better, Faster, Stronger](https://arxiv.org/abs/1612.08242)
