@@ -107,3 +107,29 @@ $$
 ## YOLO-V2
 
  [论文:YOLO9000:Better, Faster, Stronger](https://arxiv.org/abs/1612.08242)
+
+### Better
+
+**BN**
+在网络的每个卷积层后增加Batch Norm，同时弃用了dropout，网络的上升了2%mAP.
+
+**High Resolution Classifier**
+
+$448\times 448$
+
+** Convolutional With Anchor Boxes**
+
+去掉YOLO的FC层，同时去掉YOLO的最后一个pool层，增加feature map的分辨率，修改网络的输入，保证feature map有一个中心点，这样可提高效率。并且是以每个anchor box来预测物体种类的。
+最后的feature map大小为$13\times 13$在每个pixel上面使用9个anchor boxs。
+
+**Dimension Clusters**
+采用K-means聚类方法来自动选择最佳的初始boxes。
+
+
+## SSD
+
+SSD结合了YOLO和anchor的特点。更快，准确率更高。SSD是对anchor进行直接的分类和bbox回归。下面是SSD的结构图。
+
+<img src=“./img/SSD-structure.png”>
+
+
