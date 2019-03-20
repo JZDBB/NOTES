@@ -56,7 +56,7 @@ def main():
 
     plt.plot(x_points, real_func(x_points), label='real')
     plt.plot(x_points, fit_func(p_lsq_0[0], x_points), label='fitted curve')
-    plt.plot(x_points, fit_func(p_lsq_regularization[0], x_points), label='fitted_regular curve')
+    plt.plot(x_points, fit_func(p_lsq_reguarization[0], x_points), label='fitted_regular curve')
     plt.plot(x, y, 'bo', label='noise')
     plt.legend()
     plt.show()
