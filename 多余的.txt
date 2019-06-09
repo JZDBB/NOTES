@@ -13,3 +13,8 @@ autoML 胶囊网络
 
 c语言中的main（）      main (argc,argv)
     C语言还规定argc(第一个形参)必须是整型变量,argv( 第二个形参)必须是指向字符串的 指针数组。
+
+
+
+1、LSTM和GRU的区别及结构
+2、模型DAMSM模块图片特征提取采用inception-v3——>更好的人脸特征提取网络。
