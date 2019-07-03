@@ -38,9 +38,13 @@
 
 ​	查看状态，显示目前在工作区的文件状态，被修改了会显示`modified`，从来没有被添加过状态是`Untracked`等。
 
-`git add [filename]` /`git add -A` ：将修改提交到暂存区
+`git add [filename]` /`git add -A` 
 
-`git commit -m "[notes]"`：将修改提交到版本库中，备注相应的解释说明
+​	将修改提交到暂存区
+
+`git commit -m "[notes]"`
+
+​	将修改提交到版本库中，备注相应的解释说明
 
 `git checkout -- file` 用于`add`之前，文件还没被放到暂存区
 
