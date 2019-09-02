@@ -99,6 +99,66 @@ Progressive Growing of GANS for Improved Quality, Stability, and Variation(https
 
 Gradient penalty 首次在 wgan-gp 里面提出来的，记为 1-gp，目的是为了让 discriminator 满足1-lipchitchz 连续，后续 Mescheder, Lars M. et al^[19] 又提出了只针对正样本或者负样本进行梯度惩罚，记为 0-gp-sample。Thanh-Tung, Hoang et al^[20] 提出了 0-gp，具有更好的训练稳定性。
 
+code for Tensorflow
+
+```python
+# tensorflow-version
+    # Standard WGAN loss
+    gen_cost = -tf.reduce_mean(disc_fake)
+    disc_cost = tf.reduce_mean(disc_fake) - tf.reduce_mean(disc_real)
+
+    # Gradient penalty
+    alpha = tf.random_uniform(
+        shape=[BATCH_SIZE,1], 
+        minval=0.,
+        maxval=1.
+    )
+    differences = fake_data - real_data
+    interpolates = real_data + (alpha*differences)
+    gradients = tf.gradients(Discriminator(interpolates), [interpolates])[0]
+    slopes = tf.sqrt(tf.reduce_sum(tf.square(gradients), reduction_indices=[1]))
+    gradient_penalty = tf.reduce_mean((slopes-1.)**2)
+    disc_cost += LAMBDA*gradient_penalty
+```
+
+code for Pytorch
+
+```python
+# pytorch-version
+gradient_penalty = _gradient_penalty(data, generated_data)
+def _gradient_penalty(self, real_data, generated_data):
+        batch_size = real_data.size()[0]
+        # Calculate interpolation
+        alpha = torch.rand(batch_size, 1, 1, 1)
+        alpha = alpha.expand_as(real_data)
+        if self.use_cuda:
+            alpha = alpha.cuda()
+        interpolated = alpha * real_data.data + (1 - alpha) * generated_data.data
+        interpolated = Variable(interpolated, requires_grad=True)
+        if self.use_cuda:
+            interpolated = interpolated.cuda()
+
+        # Calculate probability of interpolated examples
+        prob_interpolated = self.D(interpolated)
+
+        # Calculate gradients of probabilities with respect to examples
+        gradients = torch_grad(outputs=prob_interpolated, inputs=interpolated,                           grad_outputs=torch.ones(prob_interpolated.size()).cuda() if 						self.use_cuda else torch.ones(
+                               prob_interpolated.size()),
+                               create_graph=True, retain_graph=True)[0]
+
+        # Gradients have shape (batch_size, num_channels, img_width, img_height),
+        # so flatten to easily take norm per example in batch
+        gradients = gradients.view(batch_size, -1)
+        self.losses['gradient_norm'].append(gradients.norm(2, dim=1).mean().data[0])
+
+        # Derivatives of the gradient close to 0 can cause problems because of
+        # the square root, so manually calculate norm and add epsilon
+        gradients_norm = torch.sqrt(torch.sum(gradients ** 2, dim=1) + 1e-12)
+
+        # Return gradient penalty
+        return self.gp_weight * ((gradients_norm - 1) ** 2).mean()
+```
+
 **10. Spectral normalization^[21]**
 
 谱归一化是另外一个让判别器满足 1-lipchitchz 连续的利器，建议在判别器和生成器里同时使用。Spectral Normalization 是一种**权重归一化技术**，通常用于鉴别器上，以增强训练过程。这本质上保证了鉴别器是 **K-Lipschitz** 连续的。像 SAGAN 这样的一些实现，也在生成器上使用 spectral Normalization。该方法比梯度惩罚法计算效率更高。
@@ -317,4 +377,3 @@ Self-Attention GAN 允许对图像生成任务进行注意力驱动的长期依�
  
 
 
-  
