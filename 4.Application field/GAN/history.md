@@ -18,6 +18,26 @@ L=-\log (\operatorname{sigmoid}(D(x))
 $$
   初代GAN模型有个很大的缺陷在于训练很困难，一不小心loss就会变成NaN。G网络和D网络的训练必须要处于一个平衡过程，如果一方训练得太好，就会导致另外一方无法训练下去（loss太小，反向传播梯度过小导致训练无法进行下去）。
 
+### Pros & Cons:
+
+#### Pros:
+
+- GANs are a good method for training classifiers in a semi-supervised way. See our [NIPS paper](https://arxiv.org/abs/1606.03498) and the accompanying [code](https://github.com/openai/improved-gan). You can just use our code directly with almost no modification any time you have a problem where you can’t use very many labeled examples. 
+- GANs **generate samples faster** than fully visible belief nets (NADE, PixelRNN, WaveNet, etc.) because there is no need to generate the different entries in the sample sequentially.
+- GANs don’t need any Monte Carlo approximations to train. That means it can **generate more details and high dimensional features and when it works it works well** . People complain about GANs being unstable and difficult to train, but they are much easier to train than Boltzmann machines, which relied on Monte Carlo approximations to the gradient of the log partition function. Because Monte Carlo methods don’t work very well in high dimensional spaces, Boltzmann machines have never really scaled to realistic tasks like ImageNet. GANs are at least able to learn to draw a few messed up dogs when trained on ImageNet.
+- Compared to variational autoencoders, GANs **don’t introduce any deterministic bias which cause the blur pictures**. Variational methods introduce deterministic bias because they optimize a lower bound on the log-likelihood rather than the likelihood itself. This seems to result in VAEs learning to generate blurry samples compared to GANs.
+- **Compared to nonlinear ICA** (NICE, Real NVE, etc being the most recent examples), there is no requirement that the latent code have any specific dimensionality or that the generator net be invertible.
+- **Compared to VAEs**, it’s easier to use discrete latent variables.
+- **Compared to Boltzmann machines and GSNs**, generating a sample requires only one pass through the model, rather than an unknown number of iterations of a Markov chain.
+
+#### Cons:
+
+- Training a GAN requires finding a Nash equilibrium of a game. Sometimes gradient descent does this, sometimes it doesn’t. We don’t really have a good equilibrium finding algorithm yet, so **GAN training is unstable** compared to VAE or PixelRNN training.
+- It’s **hard to learn to generate discrete data**, like text.
+- Compared to Boltzmann machines, it’s hard to do things like guess the value of one pixel given another pixel. GANs are really trained to do just one thing, which is generate all the pixels in one shot. You can fix this by using a BiGAN, which lets you guess missing pixels using Gibbs sampling, the same as in a Boltzmann machine.
+
+
+
 ## DCGAN
 
   论文地址是[UNSUPERVISED REPRESENTATION LEARNING WITH DEEP CONVOLUTIONAL GENERATIVE ADVERSARIAL NETWORKS](https://arxiv.org/pdf/1511.06434.pdf)，该文章从实践的角度对初代GAN模型提出了一些改进：
