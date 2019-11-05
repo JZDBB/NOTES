@@ -4,7 +4,7 @@
 
 **1. model choice**
 
-​	如果你不知道选择什么样的模型，那就选择 DCGAN^[3] 或者 ResNet^t[4] 作为 base model。
+​	如果你不知道选择什么样的模型，那就选择 DCGAN$^{[3] }$或者 ResNet$^{[4]}$ 作为 base model。能采用DCGAN尽量用，不行尽量采用Hybri模型：KL+GAN、VAE+GAN	
 
 **2. input layer**
 
@@ -16,7 +16,7 @@
 使用输出通道为 3 的卷积作为最后一层，可以采用 $1\times1 $或者 $3\times3$ 的 filters，有的论文也使用 $9\times9$ 的
 filters。（注：ganhacks 推荐使用 tanh）
 
-Ps^[25]:
+Ps$^{[25]}$:
 
 - 将输入规范化到 -1 和 1 之间
 - G 的输出层采用`Tanh`激活函数
@@ -25,14 +25,14 @@ Ps^[25]:
 
 - 稀疏梯度会影响 GAN 的稳定性
 - 在 G 和 D 中采用 LeakyReLU 代替 Relu 激活函数
-- 对于下采样操作，可以采用平均池化(Average Pooling) 和 Conv2d+stride 的替代方案
+- 对于下采样操作，可以采用平均池化(Average Pooling) 和 Conv2d+stride 的替代方案——Avoid max pooling for downsampling. Use convolution stride.
 - 对于上采样操作，可以使用 PixelShuffle(https://arxiv.org/abs/1609.05158), ConvTranspose2d + stride在做 decode 的时候，尽量使用 upsample+conv2d 组合代替 transposed_conv2d，可以减少 checkerboard
-  的产生^[5]；在做超分辨率等任务上，可以采用 pixelshuffle^[6]。在 tensorflow 里，可以用 tf.depth_to_sapce 来实现pixelshuffle 操作。
+  的产生$^{[5]；}$在做超分辨率等任务上，可以采用 pixelshuffle$^{[6]。}$在 tensorflow 里，可以用 tf.depth_to_sapce 来实现pixelshuffle 操作。Use PixelShuffle and transpose convolution for upsampling.
 
 **5. normalization**
 
-虽然在 resnet 里的标配是 BN，在分类任务上表现很好，但是图像生成方面，推荐使用其他 normlization 方法，例如parameterized 方法有 instance normalization^[8]、layer normalization^[9] 等，non-parameterized 方法推荐使用 pixel normalization^[10]。假如你有选择困难症，那就选择大杂烩的 normalization
-方法——switchable normalization^[11]。
+虽然在 resnet 里的标配是 BN，在分类任务上表现很好，但是图像生成方面，推荐使用其他 normlization 方法，例如parameterized 方法有 instance normalization$^{[8]、}$layer normalization$^{[9] }$等，non-parameterized 方法推荐使用 pixel normalization$^{[10]}$。假如你有选择困难症，那就选择大杂烩的 normalization
+方法——switchable normalization$^{[11]}$。
 
 - 采用 mini-batch BatchNorm，要保证每个 mini-batch 都是同样的真实图片或者是生成图片
 - 不采用 BatchNorm 的时候，可以采用 instance normalization（对每个样本的规范化操作）
@@ -40,7 +40,7 @@ Ps^[25]:
 
 **6. discriminator**
 
-想要生成更高清的图像，推荐 multi-stage discriminator^[10]。简单的做法就是对于输入图片，把它下采样（maxpooling）到不同 scale 的大小，输入三个不同参数但结构相同的discriminator。
+想要生成更高清的图像，推荐 multi-stage discriminator$^{[10]}$。简单的做法就是对于输入图片，把它下采样（maxpooling）到不同 scale 的大小，输入三个不同参数但结构相同的discriminator。
 
 **7. minibatch discriminator**
 
@@ -97,7 +97,7 @@ Progressive Growing of GANS for Improved Quality, Stability, and Variation(https
 
 **9. gradient penalty**
 
-Gradient penalty 首次在 wgan-gp 里面提出来的，记为 1-gp，目的是为了让 discriminator 满足1-lipchitchz 连续，后续 Mescheder, Lars M. et al^[19] 又提出了只针对正样本或者负样本进行梯度惩罚，记为 0-gp-sample。Thanh-Tung, Hoang et al^[20] 提出了 0-gp，具有更好的训练稳定性。
+Gradient penalty 首次在 wgan-gp 里面提出来的，记为 1-gp，目的是为了让 discriminator 满足1-lipchitchz 连续，后续 Mescheder, Lars M. et al$^{[19]} $又提出了只针对正样本或者负样本进行梯度惩罚，记为 0-gp-sample。Thanh-Tung, Hoang et al$^{[20]}$ 提出了 0-gp，具有更好的训练稳定性。
 
 code for Tensorflow
 
@@ -159,11 +159,11 @@ def _gradient_penalty(self, real_data, generated_data):
         return self.gp_weight * ((gradients_norm - 1) ** 2).mean()
 ```
 
-**10. Spectral normalization^[21]**
+**10. Spectral normalization$^{[21]}$**
 
 谱归一化是另外一个让判别器满足 1-lipchitchz 连续的利器，建议在判别器和生成器里同时使用。Spectral Normalization 是一种**权重归一化技术**，通常用于鉴别器上，以增强训练过程。这本质上保证了鉴别器是 **K-Lipschitz** 连续的。像 SAGAN 这样的一些实现，也在生成器上使用 spectral Normalization。该方法比梯度惩罚法计算效率更高。
 
-**11. one-size label smoothing^[22]**
+**11. one-size label smoothing$^{[22]}$**
 
 平滑正样本的 label，例如 label 1 变成 0.8-1.2 之间的随机数，保持负样本 label 仍然为 0。个人经验表明这个 trick能够有效缓解训练不稳定的现象，但是不能根本解决问题，假如模型不够好的话，随着训练的进行，后期 loss 会飞。
 
@@ -178,13 +178,13 @@ def _gradient_penalty(self, real_data, generated_data):
 $$
 d_{\sigma,JS(P_r|P_g)=JS[P_{\sigma}\times P_r|P_{\sigma}\times P_g]}
 $$
-**14. TTUR^[23]**
+**14. TTUR$^{[23]}$**
 
 在优化 G 的时候，我们默认是假定我们的 D 的判别能力是比当前的 G 的生成能力要好的，这样 D 才能指导 G 朝更好的方向学习。通常的做法是先更新 D的参数一次或者多次，然后再更新 G 的参数，TTUR 提出了一个更简单的更新策略，即分别为 D 和 G 设置不同的学习率，让 D 收敛速度更快。通常，生成器使用较慢的更新规则 (update rule)，鉴别器使用较快的更新规则。使用这种方法，我们可以以 1:1 的比例执行生成器和识别器的更新，只需要修改学习率。
 
 **15. training strategy**
 
-- PGGAN^[10]
+- PGGAN$^{[10]}$
 
   PGGAN 是一个渐进式的训练技巧，因为要生成高清（$1024 \times 1024$）的图片，直接从一个随机噪声生成这么高维度的数据是比较难的；既然没法一蹴而就，那就循序渐进，首先从简单的低纬度的开始生成，例如
   $4 \times 4$，然后 $16 \times 16$，直至我们所需要的图片大小。此外，由于大部分的操作都是在比较低的维度上进行的，训练速度也不比其他模型逊色多少。
@@ -193,22 +193,35 @@ $$
 
   coarse-to-refine 可以说是 PGGAN 的一个特例，它的做法就是先用一个简单的模型，加上一个 l1-loss，训练一个模糊的效果，然后再把这个模糊的照片送到后面的 refine 模型里，辅助对抗 loss 等其他loss，训练一个更加清晰的效果。这个在图片生成里面广泛应用。
 
-**16. Exponential Moving Average^[24]**
+**16. Exponential Moving Average$^{[24]}$**
 
 EMA 主要是对历史的参数进行一个指数平滑，可以有效减少训练的抖动。强烈推荐！！！
 
 **17. Optimizer**
 
-使用Adam
+- 使用Adam，Adam的优化效率对于GAN很显著，前提是能用则用，像WGAN那样，规定不能使用，才考虑替换。
+- 也可以使用SGD作为鉴别器优化，Adam作为生成器优化。
 
-##### 8. 尽早追踪失败的原因
+##### 18. 尽早追踪失败的原因
 
 - D 的 loss 变成 0，那么这就是训练失败了
 - 检查规范的梯度：如果超过 100，那出问题了
 - 如果训练正常，那么 D loss 有低方差并且随着时间降低
 - 如果 g loss 稳定下降，那么它是用糟糕的生成样本欺骗了 D
 
+##### 19. Feature Matching$^{[26]}$
 
+Feature matching changes the cost function for the generator to minimizing the statistical difference between the features of the real images and the generated images. Often, we measure the L2-distance between the means of their feature vectors. Therefore, feature matching expands the goal from beating the opponent to matching features in real images. Here is the new objective function:
+$$
+\left\|\mathbb{E}_{\boldsymbol{x} \sim p_{\text {data }} \mathbf{f}(\boldsymbol{x})-\mathbb{E}_{\boldsymbol{z} \sim p_{\boldsymbol{z}}}(\boldsymbol{z})} \mathbf{f}(G(\boldsymbol{z}))\right\|_{2}^{2}
+$$
+where *f(x)* is the feature vector extracted in an immediate layer by the discriminator.
+
+<img src=".\img\feature matching.jpeg" height=250px>
+
+The means of the real image features are computed per minibatch which fluctuate on every batch. It is good news in mitigating the mode collapse. It introduces randomness that makes the discriminator harder to overfit itself.
+
+> Feature matching is effective when the GAN model is unstable during training.
 
 
 
@@ -265,6 +278,8 @@ EMA 主要是对历史的参数进行一个指数平滑，可以有效减少训�
 [24]. Yazici, Yasin et al. “The Unusual Effectiveness of Averaging in GAN Training.” CoRRabs/1806.04498 (2018): n. pag.
 
 [25]. [Tips and tricks to make GANs work](https://github.com/soumith/ganhacks)
+
+[26]. [GAN — Ways to improve GAN performance](https://towardsdatascience.com/gan-ways-to-improve-gan-performance-acf37f9f59b)
 
 
 
@@ -372,8 +387,26 @@ Self-Attention GAN 允许对图像生成任务进行注意力驱动的长期依�
 
  
 
-### 
+### 启发式技巧是启发式平均（heuristic averaging），如果网络参数偏离之前值的运行平均值，则会受到惩罚，这有助于收敛到平衡态。
 
- 
+
+
+
+
+
+
+### **Improved Techniques for training GANs：**
+
+Feature matching：利用中间层feature map增加了一个新的损失函数，加速了平衡的收敛
+
+minibatch discrimination：解决mode collapse问题
+
+historical averaging：使参数更新时候不会忘了之前由其他样本得出的经验
+
+one-sided label smoothing：reduce the vulnerability of neural networks to adversarial examples
+
+virtual batch normalization：batch normalization的缺陷是造成神经网络对于输入样本的输出值极大依赖于在同一个batch中的其他样本，该技巧选择了固定的batch生成statistics来normalize输入样本
+
+ 	
 
 

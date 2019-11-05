@@ -23,6 +23,7 @@ $$
 #### Pros:
 
 - GANs are a good method for training classifiers in a semi-supervised way. See our [NIPS paper](https://arxiv.org/abs/1606.03498) and the accompanying [code](https://github.com/openai/improved-gan). You can just use our code directly with almost no modification any time you have a problem where you can’t use very many labeled examples. 
+- **The parameter update of G is not directly from data sample, but uses backpropagation from D.**
 - GANs **generate samples faster** than fully visible belief nets (NADE, PixelRNN, WaveNet, etc.) because there is no need to generate the different entries in the sample sequentially.
 - GANs don’t need any Monte Carlo approximations to train. That means it can **generate more details and high dimensional features and when it works it works well** . People complain about GANs being unstable and difficult to train, but they are much easier to train than Boltzmann machines, which relied on Monte Carlo approximations to the gradient of the log partition function. Because Monte Carlo methods don’t work very well in high dimensional spaces, Boltzmann machines have never really scaled to realistic tasks like ImageNet. GANs are at least able to learn to draw a few messed up dogs when trained on ImageNet.
 - Compared to variational autoencoders, GANs **don’t introduce any deterministic bias which cause the blur pictures**. Variational methods introduce deterministic bias because they optimize a lower bound on the log-likelihood rather than the likelihood itself. This seems to result in VAEs learning to generate blurry samples compared to GANs.
@@ -86,7 +87,7 @@ $\begin{align} \min_D V_{LSGAN}(D) &= \frac{1}{2}E_{x \sim p_{data}(x)}[(D(x|\Ph
 
 
 
-##### WGAN(WGAN-GP)
+## WGAN(WGAN-GP)
 
   WGAN论文地址是[Wasserstein GAN](https://arxiv.org/pdf/1701.07875.pdf)，WGAN-GP论文地址是[Improved Training of Wasserstein GANs](https://arxiv.org/pdf/1704.00028.pdf)。WGAN的主要工作是从理论上证明了传统GAN模型的loss给训练带来的弊端，并提出新的基于wasserstein distance（也称为推土机距离）的loss函数，而WGAN-GP则是对WGAN提出的一点改进再次进行了改进。具体如下：
 
@@ -109,6 +110,24 @@ $$\begin{align} \min_D V_{WGAN}(D) &= -E_{x \sim p_{data}(x)}[D(x)]+E_{z \sim p_
 
 1. [令人拍案叫绝的Wasserstein GAN](https://zhuanlan.zhihu.com/p/25071913)
 2. [Wasserstein GAN最新进展：从weight clipping到gradient penalty，更加先进的Lipschitz限制手法](https://www.zhihu.com/question/52602529/answer/158727900)
+3. [Wasserstein GAN](https://lotabout.me/2018/WGAN/)
+
+解决的问题：
+
+1. 极大的“在数值上”减弱了梯度消失的问题，而且其损失函数的值可以用来指示训练过程(此处我说“在数值上”是因为在考虑是否可以做“探索梯度组成和意义的研究，进而想到新的梯度来源和更精细、更准确的梯度更新机制，比如哪层更新哪层”)；
+2. 虽然在同样的架构下WGAN-GP与DCGAN生成的图片效果差不多，但是WGAN-GP更具健壮性，别的距离产生的损失函数针对不同的数据集需要精心设计架构、使用技巧和G-D训练比例，否则会崩溃，但是WGAN-GP基本上都可以训练好，这个也是WGAN-GP在工程实现上更加流行的原因，相比于其他论文结果复现能力和泛化能力更加强大；
+3. 至于mode collapse，论文中作者仅仅提及根据实验结果应该是解决了
+
+注意：
+
+1. 判别器最后一层去掉sigmoid函数。因为原始GAN的判别器做的是真假二分类任务，所以最后一层是sigmoid，但是现在WGAN-GP中的判别器做的是近似拟合Wasserstein距离，属于回归任务，所以要把最后一层的sigmoid拿掉。
+2. 判别器的模型架构中不能使用Batch Normalization，由于我们是对每个样本独立地施加梯度惩罚，Batch Normalization会引入同个batch中不同样本的相互依赖关系。如果需要的话，可以选择其他normalization方法，如Layer Normalization、Weight Normalization和Instance Normalization，这些方法就不会引入样本之间的依赖。论文推荐的是Layer Normalization。
+
+总结：
+
+Wasserstein Distance 是一个更好的距离度量，它最终可以转化为优化问题，我们需要找出一个判别器 DD，并要求它满足 1-Lipschitz1-Lipschitz。实际使用时我们并做不到这一点，于是有两种方法来近似：weight clipping 和 gradient penalty。
+
+
 
 ## ACGAN
 

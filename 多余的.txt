@@ -52,3 +52,11 @@ VGG在训练阶段使用了Multi-Scale的方法做数据增强，将原始图片
 
 local convolution layer？
 
+
+ALOCC几种配合训练：
+	1、train VAE+D（保存D参数为D0）——> train VAE+D ——> 判别的时候用D0判别
+	2、train VAE+D ——> train VAE ——> 判别的时候用D判别
+	3、train VAE+D（保存D参数为D0）——> train VAE+D ——> 判别的时候用D0判别
+保存threshold值的方法：
+
+最好的方法还是采用VAE encoder出来的编码向量进行OC-SVM分类或者其他传统单分类手法。
