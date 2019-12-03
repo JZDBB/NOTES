@@ -1,5 +1,7 @@
 ## Inception score（IS）
 
+**PS：** **高inception score从逻辑上也只是个高质量图片的必要非充分条件。** 
+
 IS uses two criteria in measuring the performance of GAN:
 
 - The quality of the generated images（质量）
@@ -40,3 +42,13 @@ $$
 
 
 ## FID
+
+
+
+## MRE
+
+
+
+## MS-SSIM
+
+ 关于度量泛化性的指标,我在[Conditional Image Synthesis with Auxiliary Classifier GANs](http://link.zhihu.com/?target=https%3A//arxiv.org/pdf/1610.09585.pdf) 这篇文章里看到他们提出用multi-scale structural similarity (MS-SSIM)来衡量GAN输出结果的多样性, 不知道您是否有了解过这方面的工作. 

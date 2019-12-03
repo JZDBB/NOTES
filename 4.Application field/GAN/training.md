@@ -4,7 +4,8 @@
 
 **1. model choice**
 
-​	如果你不知道选择什么样的模型，那就选择 DCGAN$^{[3] }$或者 ResNet$^{[4]}$ 作为 base model。能采用DCGAN尽量用，不行尽量采用Hybri模型：KL+GAN、VAE+GAN	
+- 如果你不知道选择什么样的模型，那就选择 DCGAN$^{[3] }$或者 ResNet$^{[4]}$ 作为 base model。能采用DCGAN尽量用，不行尽量采用Hybri模型：KL+GAN、VAE+GAN	
+- 采用更大的卷积核以及更多卷积：1. less filters $ \longrightarrow$ more blurry. more filters help capture additional information which can eventually add sharpness to the generated images. 2. larger kernels$\longrightarrow$ bigger receptive field. larger kernels at the top convolutional layers to maintain some kind of smoothness.
 
 **2. input layer**
 
@@ -26,8 +27,7 @@ Ps$^{[25]}$:
 - 稀疏梯度会影响 GAN 的稳定性
 - 在 G 和 D 中采用 LeakyReLU 代替 Relu 激活函数
 - 对于下采样操作，可以采用平均池化(Average Pooling) 和 Conv2d+stride 的替代方案——Avoid max pooling for downsampling. Use convolution stride.
-- 对于上采样操作，可以使用 PixelShuffle(https://arxiv.org/abs/1609.05158), ConvTranspose2d + stride在做 decode 的时候，尽量使用 upsample+conv2d 组合代替 transposed_conv2d，可以减少 checkerboard
-  的产生$^{[5]；}$在做超分辨率等任务上，可以采用 pixelshuffle$^{[6]。}$在 tensorflow 里，可以用 tf.depth_to_sapce 来实现pixelshuffle 操作。Use PixelShuffle and transpose convolution for upsampling.
+- 对于上采样操作，可以使用 [PixelShuffle](https://arxiv.org/abs/1609.05158), ConvTranspose2d + stride在做 decode 的时候，尽量使用 upsample+conv2d 组合代替 transposed_conv2d，可以减少 checkerboard的产生$^{[5]；}$在做超分辨率等任务上，可以采用 pixelshuffle$^{[6]。}$在 tensorflow 里，可以用 tf.depth_to_sapce 来实现pixelshuffle 操作。Use PixelShuffle and transpose convolution for upsampling.
 
 **5. normalization**
 
@@ -165,7 +165,7 @@ def _gradient_penalty(self, real_data, generated_data):
 
 **11. one-size label smoothing$^{[22]}$**
 
-平滑正样本的 label，例如 label 1 变成 0.8-1.2 之间的随机数，保持负样本 label 仍然为 0。个人经验表明这个 trick能够有效缓解训练不稳定的现象，但是不能根本解决问题，假如模型不够好的话，随着训练的进行，后期 loss 会飞。
+平滑正样本的 label，例如 label 1 变成 0.8-1.2 之间的随机数，保持负样本 label 仍然为 0。但是在训练G的时候不做平滑。个人经验表明这个 trick能够有效缓解训练不稳定的现象，但是不能根本解决问题，假如模型不够好的话，随着训练的进行，后期 loss 会飞。
 
 **12. add supervised labels**
 

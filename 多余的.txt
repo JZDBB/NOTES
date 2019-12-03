@@ -60,3 +60,8 @@ ALOCC几种配合训练：
 保存threshold值的方法：
 
 最好的方法还是采用VAE encoder出来的编码向量进行OC-SVM分类或者其他传统单分类手法。
+
+
+
+template of bird！
+
