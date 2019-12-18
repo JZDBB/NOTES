@@ -1,3 +1,5 @@
+# Deformable Convolution
+
 ## separable convolutions
 
 - 空间可分离卷积（spatial separable convolutions）：空间可分离就是将$3 \times 3$的卷积核拆分为$3 \times 1$和$1\times 3$的卷积核的两步操作。
@@ -7,15 +9,15 @@
 
 **深度卷积** 在不改变深度的情况下对输入图像进行卷积。我们使用3个形状为$5 \times 5 \times 1$的内核。  每个$5 \times 5 \times 1$内核迭代图像的一个通道，得到每$25$个像素组的标量积，得到一个$8 \times 8 \times 1$图像。将这些图像叠加在一起可以创建一个$8 \times 8 \times 3$的图像。
 
-<img src="../img/separate conv1.png" height="200px">
+<img src="C:/Users/yn/Desktop/learning_notes/3.Methods/img/separate conv1.png" height="200px">
 
   **逐点卷积** 增加每个图像的通道数  通过$8 \times 8 \times 3$图像迭代$1 \times 1 \times 3$内核，得到$8 \times 8 \times 1$图像。  
 
-<img src="../img/separate conv2.png" height="200px">
+<img src="C:/Users/yn/Desktop/learning_notes/3.Methods/img/separate conv2.png" height="200px">
 
 创建$256$个$1 \times 1 \times 3$内核，每个内核输出一个$8 \times 8 \times 1$图像，以得到形状为$8 \times 8 \times 256$的最终图像。 
 
-<img src="../img/separate conv3.png" height="200px">
+<img src="C:/Users/yn/Desktop/learning_notes/3.Methods/img/separate conv3.png" height="200px">
 
 也就是 把卷积分解成两部分：深度卷积和逐点卷积。更抽象地说，如果原始卷积函数是$12 \times 12 \times 3 - (5 \times 5 \times 3 \times 256)→8 \times 8 \times 256$，我们可以将这个新的卷积表示为$12 \times 12 \times 3 - (5 \times 5 \times 1 \times 1) → (1 \times 1 \times 3 \times 256) →8 \times 8 \times 256$。  
 
