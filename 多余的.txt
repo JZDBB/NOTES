@@ -65,3 +65,7 @@ ALOCC几种配合训练：
 
 template of bird！
 
+1 transform -> for data arguementation
+2 normalization 
+3 pixelshuffle for super-resolution
+4 
