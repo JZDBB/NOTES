@@ -69,3 +69,15 @@ template of bird！
 2 normalization 
 3 pixelshuffle for super-resolution
 4 
+
+
+
+
+
+
+
+
+0 4795
+1 2569
+2 2395
+3 4743
