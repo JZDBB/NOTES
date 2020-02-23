@@ -27,7 +27,7 @@ Ps$^{[25]}$:
 - 稀疏梯度会影响 GAN 的稳定性
 - 在 G 和 D 中采用 LeakyReLU 代替 Relu 激活函数
 - 对于下采样操作，可以采用平均池化(Average Pooling) 和 Conv2d+stride 的替代方案——Avoid max pooling for downsampling. Use convolution stride.
-- 对于上采样操作，可以使用 [PixelShuffle](https://arxiv.org/abs/1609.05158), ConvTranspose2d + stride在做 decode 的时候，尽量使用 upsample+conv2d 组合代替 transposed_conv2d，可以减少 checkerboard的产生$^{[5]；}$在做超分辨率等任务上，可以采用 pixelshuffle$^{[6]。}$在 tensorflow 里，可以用 tf.depth_to_sapce 来实现pixelshuffle 操作。Use PixelShuffle and transpose convolution for upsampling.
+- 对于上采样操作，可以使用 [PixelShuffle](https://arxiv.org/abs/1609.05158), ConvTranspose2d + stride在做 decode 的时候，尽量使用 upsample+conv2d 组合代替 transposed_conv2d，可以减少 checkerboard的产生$^{[5]；}$在做超分辨率等任务上，可以采用 pixelshuffle$^{[6]。}$在 tensorflow 里，可以用 tf.depth_to_sapce 来实现pixelshuffle 操作。
 
 **5. normalization**
 
