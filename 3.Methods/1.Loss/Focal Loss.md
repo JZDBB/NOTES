@@ -10,7 +10,7 @@
 $$
 H\left(\boldsymbol y^{(i)}, \boldsymbol {\hat y}^{(i)}\right ) = -\sum_{j=1}^q y_j^{(i)} \log \hat y_j^{(i)},
 $$
-假设训练数据集的样本数为$n​$，交叉熵损失函数定义为:
+假设训练数据集的样本数为$n$，交叉熵损失函数定义为:
 $$
 \ell(\boldsymbol{\Theta}) = \frac{1}{n} \sum_{i=1}^n H\left(\boldsymbol y^{(i)}, \boldsymbol {\hat y}^{(i)}\right ),
 $$
@@ -23,7 +23,7 @@ Loss=-\boldsymbol y\cdot log(\boldsymbol {\hat y})-(1-\boldsymbol y)\cdot log(1-
 $$
 其中$y\in{0, 1}$  是真实标签，${\hat y}$是预测值。
 
-#### 硬截断$Loss$
+### 硬截断$Loss$
 
 $$
 L^*=\lambda(\boldsymbol y, \boldsymbol {\hat y}) \cdot Loss \quad \Rightarrow \quad
@@ -37,7 +37,7 @@ $$
 
 所以，重点就是**“不只是要告诉模型正样本的预测值大于0.5就不更新了，而是要告诉模型当其大于0.5后就只需要保持就好了”**。
 
-#### 软化$Loss$
+### 软化$Loss$
 
 硬截断的缺点是$\lambda(\bold y, \bold {\hat y})$是不可导的，软化就是讲一些不可导的函数用可导的函数来表示近似，也可以称为**“光滑化”**，因此改写$Loss$
 $$
@@ -46,7 +46,7 @@ L^*=\begin{cases}
 -\theta(\boldsymbol{\hat y}-0.5)\cdot log(1-\boldsymbol {\hat y}),& \boldsymbol y=0
 \end{cases}
 $$
-此处的$\theta​$是一个单位阶跃函数。做软化后可以用**sigmoid函数**替代。
+此处的$\theta$是一个单位阶跃函数。做软化后可以用**sigmoid函数**替代。
 $$
 L^*{^*}=\begin{cases}
 -\sigma(-\boldsymbol{K}x)\cdot log(\sigma(x)),& \boldsymbol y=1\\
@@ -69,7 +69,7 @@ p, &y=1\\
 $$
 这里的$focusing \ parameter \  \gamma >0$，由此才能更加注重那些困难的，错分的数据。
 
-举个例子，设置$\gamma=2​$，对于正样本而言，预测结果为0.95的简单样本，$(1-0.95)^{\gamma}​$是很小的，此时的损失函数就会较小，关注度就减少，更新权值的时候梯度就很小。如果预测结果是0.3，那么$(1-0.3)^{\gamma}​$就会很大。对于负样本来说，也是一样的。因此$(1-p_t)^{\gamma}​$被称之为$modulating\ factor​$（调制系数）。
+举个例子，设置$\gamma=2$，对于正样本而言，预测结果为0.95的简单样本，$(1-0.95)^{\gamma}$是很小的，此时的损失函数就会较小，关注度就减少，更新权值的时候梯度就很小。如果预测结果是0.3，那么$(1-0.3)^{\gamma}$就会很大。对于负样本来说，也是一样的。因此$(1-p_t)^{\gamma}$被称之为$modulating\ factor$（调制系数）。
 
 为了平衡正负样本不均匀的情况，加入了$\alpha$作为平衡因子：
 $$
@@ -95,3 +95,16 @@ $$
 L^*{^*}=-softmax(-K{x_t})^{\gamma}log(softmax(x_t))
 $$
 这里$x_t$也是目标的预测值，但它是softmax前的结果。
+
+## 多任务Focal Loss
+
+
+
+
+
+
+
+## Focal Loss 训练细节
+
+- 在一开始训练时不要用，到网络权重更新到一定时加入Focal Loss效果更佳。
+- 

@@ -43,7 +43,11 @@ $$
 
 ## FID
 
+Fréchet Inception Distance是计算真实图像和生成图像的特征向量之间距离的一种度量。
 
+
+
+GANs Trained by a Two Time-Scale Update Rule Converge to a Local Nash Equilibrium
 
 ## MRE
 
