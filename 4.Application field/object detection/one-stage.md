@@ -92,7 +92,7 @@ YOLO是一个全新的方法，把一整张图片一下子应用到一个神经�
 
 ### 测试 
 
-YOLO测试中，最终会得到7*7*2=98个预测框，同时也有其预测框中的带有的confidence，以及类别预测。 
+YOLO测试中，最终会得到$7 \times 7 \times 2=98$个预测框，同时也有其预测框中的带有的confidence，以及类别预测。 
 $$
 Pr(Class_i|Object)\times Pr(Object) \times IOU^{truth}_{pred}=Pr(Class_i)\times IOU^{truth}_{pred}
 $$
@@ -110,20 +110,85 @@ $$
 
 ### Better
 
-**BN**
+##### 1. BN
+
 在网络的每个卷积层后增加Batch Norm，同时弃用了dropout，网络的上升了2%mAP.
 
-**High Resolution Classifier**
+##### 2. High Resolution Classifier
 
-$448\times 448$
+$448\times 448$，并在前10个epoch上进行分辨率的微调为了适应更高的分辨率。​
 
-** Convolutional With Anchor Boxes**
+##### 3. Convolutional With Anchor Boxes
 
-去掉YOLO的FC层，同时去掉YOLO的最后一个pool层，增加feature map的分辨率，修改网络的输入，保证feature map有一个中心点，这样可提高效率。并且是以每个anchor box来预测物体种类的。
-最后的feature map大小为$13\times 13$在每个pixel上面使用9个anchor boxs。
+去掉YOLO的FC层，同时去掉YOLO的最后一个pool层，增加feature map的分辨率，修改网络的输入，保证f**eature map有一个中心点，这样可提高效率**。并且是以每个anchor box来预测物体种类的。最后的feature map大小为$13\times 13$​​在每个pixel上面使用9个anchor boxs，后面选取了5个候选的anchor boxs。
 
-**Dimension Clusters**
-采用K-means聚类方法来自动选择最佳的初始boxes。
+##### 4. Dimension Clusters
+
+采用K-means聚类方法来自动选择最佳的初始boxes。在训练集的图片标签上做一个聚类操作，聚类算法为：
+
+$d(box, centroid)=1-IOU(box, centroid)$
+
+将所有候选框进行聚类，选定5个为候选的anchor box，作为先验信息，提升检测的准确率。
+
+##### 5. Direct location prediction  
+
+相比于Faster RCNN和SSD对位置信息采用偏移量预测的方法。yolo2采用直接预测位置信息的方法。
+
+<img src="./img/yolo2-location prediction.png" alt="image-20210918141926957" style="zoom: 60%;" />
+$$
+b_x=\sigma(t_x)+c_x, \ \ b_y = \sigma(t_y)+c_y, \ \ b_w = p_we^{t_w}, \ \ b_h = p_he^{t_h}, \ \ Pr(object) *IOU(b, object)=\sigma(t_o)
+$$
+其中，$c_x, c_y,p_w, p_h$​​ 为聚类后5个anchor box的先验信息。
+
+##### 6. Fine-Grained Features  
+
+采用passthrough的方法增加细粒度细节，将浅层的$26 \times 26$ 的特征图谱映射到$13 \times 13$的特征域上，增加细粒度特征。
+
+##### 7.Multi-Scale Training.  
+
+以32为基数，将输入图片转换成不同尺度大小的图片，去掉全连接层，每10个epoch更换一次训练尺度，使得网络能够适用于从$320 \times 320$到$608 \times 608$的不同尺度的目标检测任务。
+
+### Faster
+
+##### 1. less parameters - Darknet
+
+借鉴VGG网络构建了19层的特征提取网络Darknet，融合NIN将卷积网络转换为轻量级卷积，充分提取特征。
+
+##### 2. multi-tast training
+
+同时训练分类和检测，也可以分来训练两个任务，任务之间相辅相成，提升分类和检测效果。
+
+### Stronger
+
+##### 1. jointly training datas
+
+##### 2. Hierarchical classification
+
+建立一个层级的树状知识概念结构，将COCO和ImageNet中的所有分类作为语料建立WordTree。构造yolo9000可以实现在COCO上进行检测，也可以在ImageNet上进行分类。在高层分类的监督标签置信度较高，越低的类别置信度低。
+
+<img src="./img/hierarchical classificaiton.png" alt="image-20210918141926957" style="zoom: 60%;" />
+
+
+
+## YOLO-v3
+
+##### 1. Multilabel Classification
+
+由于开源数据集上有很多标签类别是重叠的，比如人和女人的标签是重叠的，因此，移除softmax，改用binary cross-entropy损失进行类别预测。
+
+##### 2. Predictions Across Scales  
+
+预测3个不同尺度的bbox，采用类似feature pyramid networks（FPN），在最后输出层为3D的tensor输出bbox，位置
+
+##### 3. Darknet-53
+
+增加了残差层的darknet，提高了提特征网络的层数，提取更深层特征。
+
+
+
+
+
+
 
 
 ## SSD
@@ -131,5 +196,4 @@ $448\times 448$
 SSD结合了YOLO和anchor的特点。更快，准确率更高。SSD是对anchor进行直接的分类和bbox回归。下面是SSD的结构图。
 
 <img src=“./img/SSD-structure.png”>
-
 

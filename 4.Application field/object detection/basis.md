@@ -31,9 +31,6 @@
 
   目标检测中用来衡量检测结果的重要参数之一。
 
-- 
-
-- 
 
 
 
@@ -45,7 +42,7 @@
 
 下面我们分别设定好一组大小$s_1,\ldots,s_n$和一组宽高比$r_1,\ldots,r_m$。如果以每个像素为中心时使用所有的大小与宽高比的组合，输入图像将一共得到$whnm$个锚框。虽然这些锚框可能覆盖了所有的真实边界框，但计算复杂度容易过高。因此，我们通常只对包含$s_1$或$r_1$的大小与宽高比的组合感兴趣，即
 
-$$(s_1, r_1), (s_1, r_2), \ldots, (s_1, r_m), (s_2, r_1), (s_3, r_1), \ldots, (s_n, r_1).​$$
+$$(s_1, r_1), (s_1, r_2), \ldots, (s_1, r_m), (s_2, r_1), (s_3, r_1), \ldots, (s_n, r_1).$$
 
 也就是说，以相同像素为中心的锚框数量为$n+m-1$。对于整个输入图像，我们将一共生成$wh(n+m-1)$个锚框。
 
@@ -73,9 +70,21 @@ $$J(\mathcal{A},\mathcal{B}) = \frac{\left|\mathcal{A} \cap \mathcal{B}\right|}{
 
 <div style="float:left;border:solid 1px 000;margin:2px;"><img src=".\img\anchor2.png" height="280" ></div><div style="float:left;border:solid 1px 000;margin:2px;"><img src=".\img\anchor3.png" height="280" ></div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 在神经网络中的目标检测，当不同层的特征图在输⼊图像上分别拥有不同大小的感受野时，它们将分别用来检测不同大小的目标。例如，我们可以通过设计网络，令较接近输出层的特征图中每个单元拥有更广阔的感受野，从而检测输入图像中更大尺寸的目标。 我们用输入图像在某个感受野区域内的信息来预测输入图像上与该区域相近的锚框的类别和偏移量。
-
-
 
 ### [mAP](https://github.com/rafaelpadilla/Object-Detection-Metrics)
 
@@ -89,7 +98,7 @@ $mAP=mean(AP), \quad where \ AP \ is \ about \ each\ class.$
 
 下面举个例子说明：
 
-以下是目标检测的结果，红色为结果框，绿色为ground truth。
+以下是一个类别目标检测的结果，红色为结果框，绿色为ground truth。
 
 <img src="./img/map_e.png">
 
@@ -101,17 +110,31 @@ $mAP=mean(AP), \quad where \ AP \ is \ about \ each\ class.$
 
 <img src="img/map_e3.png">
 
-下面有两种方法可以求得$AP​$结果有所差异。
+下面有两种方法可以求得$AP$结果有所差异。
 
 <div style="float:left;border:solid 1px 000;margin:2px;"><img src=".\img\map_e4.png" height="290" ></div><div style="float:left;border:solid 1px 000;margin:2px;"><img src=".\img\map_e5.png" height="290" ></div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 第一种方法可以求得：
 
-$A_1=(0.0666-0)\times1=0.0666, \quad A_2=(0.1333-0.0666)\times0.6666=0.04446,​$
+$A_1=(0.0666-0)\times1=0.0666, \quad A_2=(0.1333-0.0666)\times0.6666=0.04446,$
 
-$A_3=(0.4-0.1333)\times0.4285=0.11428, \quad A_4=(0.4666-0.4)\times0.3043=0.02026 ​$
+$A_3=(0.4-0.1333)\times0.4285=0.11428, \quad A_4=(0.4666-0.4)\times0.3043=0.02026 $
 
-$AP=A_1+A_2+A_3+A_4=0.245609=24.56\%​$
+$AP=A_1+A_2+A_3+A_4=0.245609=24.56\%$
 
 第二种方法：
 
